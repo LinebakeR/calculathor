@@ -1,0 +1,32 @@
+<div class="containerWrapper">
+  <div class="mainContainer">
+    @for (nbWeek of week; track week[0].name) {
+      <div class="container">
+        <div class="week">{{ nbWeek.name }}</div>
+        @for (day of dayWeek; track dayWeek) {
+          <div class="form">
+            {{ day }}
+            <mat-form-field>
+              <mat-label>Start hour</mat-label>
+              <input type="time" matInput #startHourInput (change)="saveStartHour(startHourInput, day, nbWeek.name)">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>End hour</mat-label>
+              <input type="time" matInput #endHourInput (change)="saveEndHour(endHourInput, day, nbWeek.name)">
+            </mat-form-field>
+          </div>
+        }
+      </div>
+    }
+    <div class="buttonWrapper">
+      <button type="button" (click)="calculate()" class="btn btn-secondary">Calcule</button>
+      <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
+    </div>
+  </div>
+  <div class="altContainer">
+    <span class="title">Compte rendu du mois</span>
+    <div class="result" *ngIf="overWorkedHours">
+      {{ overWorkedHours }}
+    </div>
+  </div>
+</div>
