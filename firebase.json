@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "calculathor",
     "public": "dist/calculathor/browser",
     "ignore": [
       "firebase.json",

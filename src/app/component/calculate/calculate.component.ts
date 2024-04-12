@@ -17,6 +17,8 @@ export class CalculateComponent implements OnInit {
   public hourData: IHour[] = [];
   public regroupedByWeek: IWeek[] = [];
   public isOverHours: boolean = false;
+  public classicStartHour: string = "09:00";
+  public classicEndHour: string = "18:00";
   public overWorkedHours: string;
 
   ngOnInit(): void {
@@ -65,26 +67,24 @@ export class CalculateComponent implements OnInit {
 
   public calculate() {
     this.regroupedByWeek = this.groupByWeek(this.hourData).sort((a, b) => a.week.localeCompare(b.week));
-    let suppH: number = 0;
-    let classicDayWorkedInSec = 32400;
+    let workExtraHours: number = 0;
     const calc = (arr: IWeek[]) => {
       arr.forEach(el => {
         const dayWeek = el.dayWeek;
         dayWeek.forEach(el => {
-          const workH = this.convertToSeconds(el.endHour, el.startHour);
-
-          if (workH > classicDayWorkedInSec) {
-            suppH += workH - classicDayWorkedInSec
-          } else {
-            this.overWorkedHours = "Aucune heure supplémentaire ce mois-ci"
+          if (el.startHour && el.endHour) {
+            workExtraHours += this.convertExtraHourToSeconds(el.endHour, el.startHour);
           }
         })
       })
-      this.overWorkedHours = "Il y a: " + this.convertToNormalDisplayTime(suppH) + " supplémentaires ce mois-ci";
+      if (workExtraHours < 0) {
+        this.overWorkedHours = "Aucune heure supplémentaire ce mois-ci"
 
+      } else {
+        this.overWorkedHours = "Il y a: " + this.convertToNormalDisplayTime(workExtraHours) + " supplémentaires ce mois-ci";
+      }
     }
     calc(this.regroupedByWeek);
-
   }
 
   private groupByWeek(data: IHour[]): IWeek[] {
@@ -101,22 +101,39 @@ export class CalculateComponent implements OnInit {
     }, []);
   }
 
-  private convertToSeconds(endHour: string, startHour: string): number {
+  private convertExtraHourToSeconds(endHour: string, startHour: string): number {
+    let extraHour: number = 0;
+
     const [startH, startMin] = startHour.split(':').map(Number)
     const [endH, endMin] = endHour.split(':').map(Number);
+    const [classicStartH, classicStartMin] = this.classicStartHour.split(':').map(Number);
+    const [classicEndH, classicEndMin] = this.classicEndHour.split(':').map(Number);
+    const classicStartHInSec = classicStartH * 3600 + classicStartMin * 60;
+    const classicEndHInSec = classicEndH * 3600 + classicEndMin * 60;
     const startHourInSec = startH * 3600 + startMin * 60;
     const endHourInSec = endH * 3600 + endMin * 60
 
-    return endHourInSec - startHourInSec;
-  }
+    if (startHourInSec < classicStartHInSec) {
+      extraHour += classicStartHInSec - startHourInSec;
+    }
 
-  private convertToNormalDisplayTime(suppHours: number): string {
-    return moment.utc(1000 * suppHours).format('H[h] mm[m]');
+    if (endHourInSec > classicEndHInSec) {
+      extraHour += endHourInSec - classicEndHInSec;
+    }
+
+    return extraHour;
   }
 
   public reset() {
     this.overWorkedHours = "";
     this.startHourInputs.forEach(input => input.nativeElement.value = "");
     this.endHourInputs.forEach(input => input.nativeElement.value = "");
+    this.hourData = [];
+    this.regroupedByWeek = [];
+  }
+
+
+  private convertToNormalDisplayTime(suppHours: number): string {
+    return moment.utc(1000 * suppHours).format('H[h] mm[m]');
   }
 }
