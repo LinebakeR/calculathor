@@ -1,29 +1,7 @@
-<div class="buttonWrapper">
-  <button type="button" (click)="calculate()" class="btn btn-secondary">Calcule</button>
-  <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
-</div>
-<div class="containerWrapper">
-  <div class="mainContainer">
-      <div class="container">
-        @for (day of dayWeek(); track day.days) {
-          <div class="form">
-            <div class="week">{{ day.week }}</div>
-            @for (singleDay of day.days; track singleDay) {
-              <div class="day">{{ singleDay }}</div>
-              <mat-form-field>
-                <mat-label>Start hour</mat-label>
-                <input type="time" matInput #startHourInput [defaultValue]="classicStartHour"
-                       (change)="saveStartHour(startHourInput, singleDay, day.week)">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>End hour</mat-label>
-                <input type="time" matInput #endHourInput [defaultValue]="classicEndHour"
-                       (change)="saveEndHour(endHourInput, singleDay, day.week)">
-              </mat-form-field>
-            }
-          </div>
-        }
-      </div>
+<div class="tools">
+  <div class="buttonWrapper">
+    <button type="button" (click)="calculate()" class="btn btn-secondary">Calcule</button>
+    <button type="button" (click)="reset()" class="btn btn-secondary">Reset</button>
   </div>
   <div class="altContainer">
     <span class="title">Compte rendu du mois</span>
@@ -31,4 +9,29 @@
       {{ overWorkedHours }}
     </div>
   </div>
+</div>
+
+<div class="container">
+  @for (day of dayWeek(); track day.days) {
+    <div class="containerWrapper">
+      <div class="test">
+        <div class="week">{{ day.week }}</div>
+        @for (singleDay of day.days; track singleDay) {
+          <div class="day">{{ singleDay }}</div>
+          <div class="test">
+            <mat-form-field class="formField">
+              <mat-label>Start hour</mat-label>
+              <input type="time" matInput #startHourInput [defaultValue]="classicStartHour"
+                     (change)="saveStartHour(startHourInput, singleDay, day.week)">
+            </mat-form-field>
+            <mat-form-field class="formField">
+              <mat-label>End hour</mat-label>
+              <input type="time" matInput #endHourInput [defaultValue]="classicEndHour"
+                     (change)="saveEndHour(endHourInput, singleDay, day.week)">
+            </mat-form-field>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>

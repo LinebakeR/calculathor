@@ -21,7 +21,6 @@ export class CalculateComponent implements OnInit {
   public overWorkedHours: string;
 
   ngOnInit(): void {
-    console.log('NUMBER DAY IN MONTH', moment().daysInMonth())
     const daysWeeks : { week: string; days: string[] }[] = []
     let dayWeekName: string[] = [];
     let count = 1;
@@ -49,8 +48,6 @@ export class CalculateComponent implements OnInit {
     const eventValue: string = event.value;
     if (eventValue) {
       const index = this.hourData.findIndex(item => item.day === day && item.week === nbWeek);
-      console.log('INDEX', index)
-      console.log('HOURDATA', this.hourData)
       const test: IHour = {
         day: day,
         week: nbWeek,

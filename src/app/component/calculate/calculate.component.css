@@ -1,19 +1,8 @@
-.container {
-  display: flex;
-  padding: 24px;
-  border-radius: 4px;
-  overflow: auto;
+.containerWrapper {
+  overflow: hidden;
   outline: 0;
   max-width: 100%;
   max-height: 100%;
-  min-height: inherit;
-  min-width: inherit;
-}
-
-.form {
-  display: flex;
-  flex-direction: column; /* Colonnes verticales */
-  margin-right: 20px; /* Espacement entre les colonnes */
 }
 
 .week {
@@ -27,29 +16,56 @@
   font-family: "Script MT Bold";
 }
 
-.containerWrapper {
-  display: flex;
-  flex-direction: row;
+.result {
+  width: 300px;
+}
+
+.tools {
+  grid-template-columns: repeat(auto-fit, minmax(174px, 1fr));
+}
+
+.container {
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fit, minmax(174px, 1fr));
+  max-width: 75%;
 }
 
 .altContainer {
   margin-top: 5px;
+  margin-left: 43%;
+  display: flex;
+  flex-direction: column;
 }
 
 .buttonWrapper {
   display: flex;
   flex-direction: row;
-  position: sticky;
-  margin: 35px 15px 0px 440px;
+  margin-left: 43%;
 }
 
 button {
-  margin-right: 20px;
+  margin-right: 2em;
 }
 
-@media screen and (max-width: 390px) {
+@media screen and (max-width: 400px) {
+  .containerWrapper {
+    display: grid;
+  }
+
   .container {
     display: grid;
+    justify-content: space-between;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    margin: 0;
+    padding: 0;
+  }
+
+  .formField {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 45%;
   }
 
   button {
@@ -61,15 +77,43 @@ button {
     display: flex;
   }
 
-  .result {
-    margin-left: -35%;
+  .tools {
     display: flex;
-    margin-top: 20px;
+    flex-direction: column;
+    align-content: start;
+    justify-content: center;
+  }
+
+  .result {
+    margin-left: -64%;
+    margin-bottom: 25px;
+  }
+
+  .result{
+    margin-left: -35%; /*pas ouf*/
+  }
+
+  .altContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-left: 115px;
   }
 
   .buttonWrapper {
     display: flex;
     flex-direction: row;
-    margin: -15px 15px 0 0;
+    margin: 15px 0 30px 0;
+  }
+
+  .week {
+    font-weight: 600;
+    font-family: sans-serif;
+  }
+
+  .day {
+    font-size: medium;
+    font-family: "Script MT Bold";
+    margin-left: 15px;
   }
 }
