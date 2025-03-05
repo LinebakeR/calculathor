@@ -1,5 +1,5 @@
 export interface IHour {
-  day: string;
+  day: string[];
   week: string;
   startHour: string;
   endHour: string;

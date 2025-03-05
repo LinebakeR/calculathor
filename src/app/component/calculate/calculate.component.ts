@@ -1,7 +1,8 @@
-import {Component, ElementRef, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, ElementRef, OnInit, signal, ViewChildren} from '@angular/core';
 import {IHour} from "../models/IHour";
 import {IWeek} from "../models/IWeek";
 import moment from 'moment';
+import 'moment/locale/fr';
 
 @Component({
   selector: 'app-calculate',
@@ -12,21 +13,39 @@ export class CalculateComponent implements OnInit {
   @ViewChildren('startHourInput') startHourInputs: ElementRef[];
   @ViewChildren('endHourInput') endHourInputs: ElementRef[];
 
-  public dayWeek: string[] = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-  public week = [{name: 'Semaine 1'}, {name: 'Semaine 2'}, {name: 'Semaine 3'}, {name: 'Semaine 4'}];
+  public dayWeek  = signal<{ week: string; days: string[] }[]>([]);
   public hourData: IHour[] = [];
   public regroupedByWeek: IWeek[] = [];
-  public isOverHours: boolean = false;
   public classicStartHour: string = "09:00";
   public classicEndHour: string = "18:00";
   public overWorkedHours: string;
 
   ngOnInit(): void {
+    console.log('NUMBER DAY IN MONTH', moment().daysInMonth())
+    const daysWeeks : { week: string; days: string[] }[] = []
+    let dayWeekName: string[] = [];
+    let count = 1;
+    let currentWeekday = 1
+    for(let i = 1; i <= moment().daysInMonth(); i ++) {
 
+      let currentDate = moment().date(i);
+      let dayName = currentDate.format('dddd');
+      if (dayName !== 'samedi' && dayName !== 'dimanche') {
+        const formatDate = `${dayName} ${i}`;
+        dayWeekName.push(formatDate);
+        if (currentWeekday === 5 || i === moment().daysInMonth()) {
+          daysWeeks.push({ week: `Semaine ${count}`, days: dayWeekName });
+          dayWeekName = [];
+          count++;
+          currentWeekday = 0;
+        }
+        currentWeekday++;
+      }
+    }
+    this.dayWeek.set(daysWeeks);
   }
 
-
-  public saveStartHour(event: HTMLInputElement, day: string, nbWeek: string) {
+  public saveStartHour(event: HTMLInputElement, day: string[], nbWeek: string) {
     const eventValue: string = event.value;
     if (eventValue) {
       const index = this.hourData.findIndex(item => item.day === day && item.week === nbWeek);
@@ -46,7 +65,7 @@ export class CalculateComponent implements OnInit {
     }
   }
 
-  public saveEndHour(event: HTMLInputElement, day: string, nbWeek: string) {
+  public saveEndHour(event: HTMLInputElement, day: string[], nbWeek: string) {
     const eventValue: string = event.value;
     if (eventValue) {
       const index = this.hourData.findIndex(item => item.day === day && item.week === nbWeek);
@@ -69,12 +88,14 @@ export class CalculateComponent implements OnInit {
     this.regroupedByWeek = this.groupByWeek(this.hourData).sort((a, b) => a.week.localeCompare(b.week));
     let workExtraHours: number = 0;
     const calc = (arr: IWeek[]) => {
-      arr.forEach(el => {
-        const dayWeek = el.dayWeek;
-        dayWeek.forEach(el => {
-          if (el.startHour && el.endHour) {
-            workExtraHours += this.convertExtraHourToSeconds(el.endHour, el.startHour);
+      arr.forEach(day => {
+        const dayWeek = day.dayWeek;
+        dayWeek.forEach(day => {
+          if (!day.startHour && !day.endHour) {
+            day.startHour = this.classicStartHour
+            day.endHour = this.classicEndHour
           }
+          workExtraHours += this.convertExtraHourToSeconds(day.endHour, day.startHour);
         })
       })
       if (workExtraHours < 0) {
@@ -85,6 +106,10 @@ export class CalculateComponent implements OnInit {
       }
     }
     calc(this.regroupedByWeek);
+  }
+
+  private computeOtherTask() {
+
   }
 
   private groupByWeek(data: IHour[]): IWeek[] {
@@ -126,8 +151,8 @@ export class CalculateComponent implements OnInit {
 
   public reset() {
     this.overWorkedHours = "";
-    this.startHourInputs.forEach(input => input.nativeElement.value = "");
-    this.endHourInputs.forEach(input => input.nativeElement.value = "");
+    this.startHourInputs.forEach(input => input.nativeElement.value = this.classicStartHour);
+    this.endHourInputs.forEach(input => input.nativeElement.value = this.classicEndHour);
     this.hourData = [];
     this.regroupedByWeek = [];
   }
