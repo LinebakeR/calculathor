@@ -45,11 +45,12 @@ export class CalculateComponent implements OnInit {
     this.dayWeek.set(daysWeeks);
   }
 
-  public saveStartHour(event: HTMLInputElement, day: string[], nbWeek: string) {
+  public saveStartHour(event: HTMLInputElement, day: string, nbWeek: string) {
     const eventValue: string = event.value;
     if (eventValue) {
       const index = this.hourData.findIndex(item => item.day === day && item.week === nbWeek);
-
+      console.log('INDEX', index)
+      console.log('HOURDATA', this.hourData)
       const test: IHour = {
         day: day,
         week: nbWeek,
@@ -65,7 +66,7 @@ export class CalculateComponent implements OnInit {
     }
   }
 
-  public saveEndHour(event: HTMLInputElement, day: string[], nbWeek: string) {
+  public saveEndHour(event: HTMLInputElement, day: string, nbWeek: string) {
     const eventValue: string = event.value;
     if (eventValue) {
       const index = this.hourData.findIndex(item => item.day === day && item.week === nbWeek);
